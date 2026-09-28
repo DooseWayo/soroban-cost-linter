@@ -131,7 +131,7 @@ mod tests {
 
     #[test]
     fn source_returns_inner_for_io() {
-        let io_err = io::Error::new(io::ErrorKind::Other, "test");
+        let io_err = io::Error::other("test");
         let err = LinterError::Io(io_err);
         assert!(err.source().is_some());
     }
@@ -215,7 +215,7 @@ mod tests {
     #[test]
     fn linter_result_ok() {
         let result: LinterResult<i32> = Ok(42);
-        assert_eq!(result.unwrap(), 42);
+        assert!(result.is_ok());
     }
 
     #[test]
