@@ -2081,7 +2081,11 @@ mod tests {
         let config = BudgetConfig { lints: Some(lints) };
         let result = build_effective_lint_flags(Some(&config), &[], &[], &[]);
         assert!(result.is_err());
-        assert!(result.unwrap_err().contains("Unknown lint name 'nonexistent_lint' in budget.toml"));
+        assert!(
+            result
+                .unwrap_err()
+                .contains("Unknown lint name 'nonexistent_lint' in budget.toml")
+        );
     }
 
     #[test]
@@ -2421,12 +2425,8 @@ mod tests {
 
     #[test]
     fn cli_parses_explain_flag() {
-        let cli = Cli::try_parse_from([
-            "cargo-cost-lint",
-            "--explain",
-            "soroban_storage_in_loop",
-        ])
-        .expect("parsing should succeed");
+        let cli = Cli::try_parse_from(["cargo-cost-lint", "--explain", "soroban_storage_in_loop"])
+            .expect("parsing should succeed");
         assert_eq!(cli.explain, Some("soroban_storage_in_loop".to_string()));
     }
 
@@ -2522,11 +2522,7 @@ mod tests {
     fn lint_info_contains_all_registered_lints() {
         for name in LINT_NAMES {
             let found = LINT_INFO.iter().find(|info| info.name == *name);
-            assert!(
-                found.is_some(),
-                "lint '{}' should be in LINT_INFO",
-                name
-            );
+            assert!(found.is_some(), "lint '{}' should be in LINT_INFO", name);
         }
     }
 
@@ -2545,11 +2541,7 @@ mod tests {
     fn lint_metadata_covers_all_lints() {
         for name in LINT_NAMES {
             let found = LINT_INFO.iter().find(|m| m.name == *name);
-            assert!(
-                found.is_some(),
-                "lint '{}' should be in LINT_INFO",
-                name
-            );
+            assert!(found.is_some(), "lint '{}' should be in LINT_INFO", name);
         }
     }
 }

@@ -692,10 +692,7 @@ mod tests {
 
     #[test]
     fn test_escape_github_message_all_special() {
-        assert_eq!(
-            escape_github_message("100%\r\n"),
-            "100%25%0D%0A"
-        );
+        assert_eq!(escape_github_message("100%\r\n"), "100%25%0D%0A");
     }
 
     #[test]
@@ -1123,9 +1120,21 @@ mod tests {
         assert_eq!(value["runs"][0]["results"].as_array().unwrap().len(), 1);
         assert_eq!(value["runs"][0]["results"][0]["ruleId"], "test_lint");
         assert_eq!(value["runs"][0]["results"][0]["level"], "error");
-        assert_eq!(value["runs"][0]["results"][0]["message"]["text"], "test message");
-        assert_eq!(value["runs"][0]["tool"]["driver"]["rules"].as_array().unwrap().len(), 1);
-        assert_eq!(value["runs"][0]["tool"]["driver"]["rules"][0]["id"], "test_lint");
+        assert_eq!(
+            value["runs"][0]["results"][0]["message"]["text"],
+            "test message"
+        );
+        assert_eq!(
+            value["runs"][0]["tool"]["driver"]["rules"]
+                .as_array()
+                .unwrap()
+                .len(),
+            1
+        );
+        assert_eq!(
+            value["runs"][0]["tool"]["driver"]["rules"][0]["id"],
+            "test_lint"
+        );
     }
 
     #[test]
@@ -1165,7 +1174,13 @@ mod tests {
         let value: serde_json::Value = serde_json::from_str(&report).unwrap();
         assert_eq!(value["runs"][0]["results"].as_array().unwrap().len(), 2);
         // Rules should be deduplicated
-        assert_eq!(value["runs"][0]["tool"]["driver"]["rules"].as_array().unwrap().len(), 1);
+        assert_eq!(
+            value["runs"][0]["tool"]["driver"]["rules"]
+                .as_array()
+                .unwrap()
+                .len(),
+            1
+        );
     }
 
     #[test]
@@ -1287,19 +1302,17 @@ mod tests {
     fn test_generate_sarif_report_schema_url() {
         let report = generate_sarif_report(&[]);
         let value: serde_json::Value = serde_json::from_str(&report).unwrap();
-        assert!(
-            value["$schema"]
-                .as_str()
-                .unwrap()
-                .contains("sarif-2.1.0")
-        );
+        assert!(value["$schema"].as_str().unwrap().contains("sarif-2.1.0"));
     }
 
     #[test]
     fn test_generate_sarif_report_tool_name() {
         let report = generate_sarif_report(&[]);
         let value: serde_json::Value = serde_json::from_str(&report).unwrap();
-        assert_eq!(value["runs"][0]["tool"]["driver"]["name"], "cargo-cost-lint");
+        assert_eq!(
+            value["runs"][0]["tool"]["driver"]["name"],
+            "cargo-cost-lint"
+        );
     }
 
     #[test]
@@ -1570,8 +1583,14 @@ mod tests {
         };
         let json = serde_json::to_string(&finding).unwrap();
         let value: serde_json::Value = serde_json::from_str(&json).unwrap();
-        assert!(value.get("help").is_none(), "help should be skipped when None");
-        assert!(value.get("suggestion").is_none(), "suggestion should be skipped when None");
+        assert!(
+            value.get("help").is_none(),
+            "help should be skipped when None"
+        );
+        assert!(
+            value.get("suggestion").is_none(),
+            "suggestion should be skipped when None"
+        );
     }
 
     #[test]
@@ -1727,7 +1746,10 @@ mod tests {
         };
         let json = serde_json::to_string(&location).unwrap();
         let value: serde_json::Value = serde_json::from_str(&json).unwrap();
-        assert_eq!(value["physicalLocation"]["artifactLocation"]["uri"], "file:///test.rs");
+        assert_eq!(
+            value["physicalLocation"]["artifactLocation"]["uri"],
+            "file:///test.rs"
+        );
         assert!(value["physicalLocation"].get("region").is_none());
     }
 
