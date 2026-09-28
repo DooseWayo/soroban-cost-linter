@@ -310,7 +310,7 @@ pub fn print_findings_summary<W: Write>(
 
         // Sort severities for predictable output
         let mut sorted_severities: Vec<(String, usize)> = severity_counts.into_iter().collect();
-        sorted_severities.sort_by(|a, b| b.0.cmp(&a.0));
+        sorted_severities.sort_by(|a, b| a.0.cmp(&b.0));
 
         writeln!(writer, "  By severity:")?;
         for (level, count) in &sorted_severities {
@@ -669,6 +669,7 @@ mod tests {
         print_findings_summary(&OutputFormat::Text, &findings, &mut buf).unwrap();
         let output = String::from_utf8(buf).unwrap();
         // Severities sorted alphabetically: "error" before "warning"
+        println!("OUTPUT: {}", output);
         let idx_error = output.find("error: 1").unwrap();
         let idx_warning = output.find("warning: 1").unwrap();
         assert!(idx_error < idx_warning);
@@ -1096,7 +1097,7 @@ mod tests {
         let value: serde_json::Value = serde_json::from_str(&report).unwrap();
         assert_eq!(value["version"], "2.1.0");
         assert_eq!(value["runs"][0]["results"].as_array().unwrap().len(), 0);
-        assert_eq!(value["runs"][0]["tool"]["driver"]["rules"].as_array().unwrap().len(), 0);
+        assert!(value["runs"][0]["tool"]["driver"].get("rules").is_none());
     }
 
     #[test]
@@ -1252,7 +1253,7 @@ mod tests {
 
         let report = generate_sarif_report(&findings);
         let value: serde_json::Value = serde_json::from_str(&report).unwrap();
-        let region = value["runs"][0]["results"][0]["locations"][0]["physicalLocation"]["region"];
+        let region = &value["runs"][0]["results"][0]["locations"][0]["physicalLocation"]["region"];
         assert!(region.is_null(), "region should be null when span is zero");
     }
 
@@ -1285,7 +1286,7 @@ mod tests {
     #[test]
     fn test_generate_sarif_report_schema_url() {
         let report = generate_sarif_report(&[]);
-        let value: serde_json::Value = serde_json::from_str(&report).unwrap!(
+        let value: serde_json::Value = serde_json::from_str(&report).unwrap();
         assert!(
             value["$schema"]
                 .as_str()

@@ -81,6 +81,7 @@ impl From<&str> for LinterError {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::error::Error;
 
     #[test]
     fn display_io_error() {

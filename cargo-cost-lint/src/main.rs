@@ -260,9 +260,14 @@ pub fn parse_workspace_members_from_metadata(json_bytes: &[u8]) -> Result<Vec<St
     let mut member_names: Vec<String> = packages
         .iter()
         .filter_map(|pkg| {
-            let id = pkg.get("id").and_then(|i| i.as_str())?;
             let name = pkg.get("name").and_then(|n| n.as_str())?;
-            if workspace_members.is_empty() || workspace_members.contains(id) {
+            let is_member = if workspace_members.is_empty() {
+                true
+            } else {
+                let id = pkg.get("id").and_then(|i| i.as_str())?;
+                workspace_members.contains(id)
+            };
+            if is_member {
                 Some(name.to_string())
             } else {
                 None
@@ -2539,10 +2544,10 @@ mod tests {
     #[test]
     fn lint_metadata_covers_all_lints() {
         for name in LINT_NAMES {
-            let found = LINT_METADATA.iter().find(|m| m.name == *name);
+            let found = LINT_INFO.iter().find(|m| m.name == *name);
             assert!(
                 found.is_some(),
-                "lint '{}' should be in LINT_METADATA",
+                "lint '{}' should be in LINT_INFO",
                 name
             );
         }
