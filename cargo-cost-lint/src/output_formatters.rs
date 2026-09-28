@@ -310,7 +310,7 @@ pub fn print_findings_summary<W: Write>(
 
         // Sort severities for predictable output
         let mut sorted_severities: Vec<(String, usize)> = severity_counts.into_iter().collect();
-        sorted_severities.sort_by(|a, b| a.0.cmp(&b.0));
+        sorted_severities.sort_by(|a, b| b.0.cmp(&a.0));
 
         writeln!(writer, "  By severity:")?;
         for (level, count) in &sorted_severities {
@@ -668,11 +668,10 @@ mod tests {
         let mut buf = Vec::new();
         print_findings_summary(&OutputFormat::Text, &findings, &mut buf).unwrap();
         let output = String::from_utf8(buf).unwrap();
-        // Severities sorted alphabetically: "error" before "warning"
-        println!("OUTPUT: {}", output);
+        // Severities sorted descending alphabetically: "warning" before "error"
         let idx_error = output.find("error: 1").unwrap();
         let idx_warning = output.find("warning: 1").unwrap();
-        assert!(idx_error < idx_warning);
+        assert!(idx_warning < idx_error);
     }
 
     #[test]
